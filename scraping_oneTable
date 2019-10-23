@@ -1,0 +1,35 @@
+## ソースはhttps://algorithm.joho.info/programming/python/beautifulsoup-table-to-csv/
+
+import csv
+import requests
+from bs4 import BeautifulSoup
+
+def table_to_csv(file_path, url, selecter):
+	"""
+	file_pathは、ubuntu内のディレクトリに、ファイル名まで含んで指定。
+	urlは任意のurl
+	selecterは、欲しいtableのクラスを指定。（netKeibaのレース結果tableなら、
+	"race_table_01 nk_tb_common"になる。
+	"""
+
+
+
+
+	r = requests.get("") #任意のurl
+	soup = BeautifulSoup(html, "htlm.parser")
+
+	table = soup.findAll("table", selecter)[0]
+
+	trs = table.findAll("tr")
+
+	csv_file = open(file_path, "wt", newline = "", encoding = "utf-8_sig")
+	csv_write = csv.writer(csv_file)
+
+	for tr in trs:
+		csv_data[]
+		for cell in tr.findAll(["td", "th"]):
+			csv_data.append(cell.get_text())
+		csv_write.writerow(csv_data)
+
+	csv_file.close()
+
