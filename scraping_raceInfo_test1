@@ -1,0 +1,46 @@
+import requests
+import csv
+from bs4 import BeautifulSoup
+
+def netkeiba_scraping(url):
+    r = requests.get(url)
+    soup = BeautifulSoup(r.content, "html.parser")
+    table = soup.findAll("table", "race_table_01 nk_tb_common")
+    if len(table) == 0:
+        return -1
+    else:
+        #table = table[0]
+        info = soup.find("dl", class_="racedata fc").span.text
+        info = info.replace("\xa0", "/")
+        info = info.replace("///", " ")
+        info = info.replace(" : ", " ")
+
+        return list(map(str, info.split()))
+
+code_dict = {1: [2,[7,7]], 2: [2,[7,7]], 3: [3,[7,9,7]], 4: [3,[9,13,7]], 5: [5,[8,9,9,10,10]], 6: [5,[9,13,9,10,9]], 7: [4,[7,7,9,7]], 8: [5,[8,9,13,10,9]], 9: [5,[9,9,9,10,10]], 10: [2,[9,13]]}
+drct_path = "C:/Users/fumitaka furukawa/netkeiba_scraping_VS/scraping_test/"
+for P in range(1,11):
+    file_path = drct_path + "race_info_" + str(P).rjust(2, "0") + ".csv"
+    csv_file = open(file_path, "w", newline = "", encoding = "utf-8_sig")
+    csv_write = csv.writer(csv_file)
+    for T in range(1,code_dict[P][0]+1):
+        for D in range(1, code_dict[P][1][T-1]):
+            for R in range(1,13):
+                strP = str(P).rjust(2,"0")
+                strT = str(T).rjust(2,"0")
+                strD = str(D).rjust(2,"0")
+                strR = str(R).rjust(2,"0")
+                S = "2018"+strP+strT+strD+strR
+                #data[S] = []
+                url = "https://db.netkeiba.com/race/" + S + "/"
+                netkeiba_scraping(url)
+                info = netkeiba_scraping(url)
+                if info == -1:
+                    continue
+                else:
+                    csv_write.writerow(info)
+                  
+                
+#1106
+#上手にcsvに吐き出せたが、なぜか合計のレース数が合わない…
+#どこかで間違えているらしい。
